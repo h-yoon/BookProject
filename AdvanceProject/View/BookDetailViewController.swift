@@ -9,7 +9,9 @@ import SnapKit
 
 class BookDetailViewController: UIViewController {
 
+    //외부에서 전달받을 책 데이터
     var book: Book?
+    // recentbooks 갱신용
     var onSave: (() -> Void)?
     
     let scrollView = UIScrollView()
@@ -33,6 +35,7 @@ class BookDetailViewController: UIViewController {
         displayBookInfo()
     }
 
+    //UI
     private func setupViews() {
         contentView.axis = .vertical
         contentView.spacing = 16
@@ -66,6 +69,7 @@ class BookDetailViewController: UIViewController {
         view.addSubview(saveButton)
     }
 
+    //SNAPKIT 제약조건
     private func setupConstraints() {
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview()
@@ -95,6 +99,7 @@ class BookDetailViewController: UIViewController {
         }
     }
 
+    //책데이터 표시
     private func displayBookInfo() {
         guard let book = book else { return }
         titleLabel.text = book.title
@@ -102,6 +107,7 @@ class BookDetailViewController: UIViewController {
         priceLabel.text = "\(book.price)원"
         contentsLabel.text = book.contents
 
+        //이미지 비동기 로딩
         if let url = URL(string: book.thumbnail) {
             DispatchQueue.global().async {
                 if let data = try? Data(contentsOf: url),
@@ -115,17 +121,19 @@ class BookDetailViewController: UIViewController {
         }
     }
 
+    //모달닫기
     @objc private func dismissModal() {
         dismiss(animated: true, completion: nil)
     }
 
+    // 책, coredata + 콜백
     @objc private func didTapSave() {
         guard let book = book else { return }
         RecentBookManager.shared.saveRecentBook(book)
         CoreDataManager.shared.save(book: book)
         
         dismiss(animated: true) { [weak self] in
-            print("onsave호출")
+            print("onsave호출확인용")
             self?.onSave?()
         }
     }

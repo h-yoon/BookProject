@@ -23,11 +23,13 @@ class SavedBooksViewController: UIViewController, UITableViewDelegate, UITableVi
         loadBooks()
     }
 
+    // 화면이 다시 나타날 때 마다 최신 데이터로 리로드
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadBooks()
     }
 
+    //UI
     private func setupUI() {
         deleteAllButton.setTitle("전체 삭제", for: .normal)
         deleteAllButton.setTitleColor(.red, for: .normal)
@@ -53,6 +55,7 @@ class SavedBooksViewController: UIViewController, UITableViewDelegate, UITableVi
         }
     }
 
+    // coredata 불러오기
     private func loadBooks() {
         savedBooks = CoreDataManager.shared.fetchBooks()
         tableView.reloadData()
@@ -63,6 +66,7 @@ class SavedBooksViewController: UIViewController, UITableViewDelegate, UITableVi
         loadBooks()
     }
 
+    // 저장된 책 수만큼 셀 표시
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return savedBooks.count
     }

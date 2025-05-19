@@ -10,6 +10,7 @@ import SnapKit
 class SearchViewController: UIViewController {
 
     let searchBar = UISearchBar()
+    
     let recentCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -24,8 +25,8 @@ class SearchViewController: UIViewController {
     }()
     let tableView = UITableView()
 
-    var books: [Book] = []
-    var recentBooks: [Book] = []
+    var books: [Book] = [] //API로 불러온 책 배열
+    var recentBooks: [Book] = [] // 최근 본 책 목록
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +44,7 @@ class SearchViewController: UIViewController {
         recentCollectionView.reloadData()
     }
 
+    //UI
     private func setupViews() {
         searchBar.placeholder = "책 제목을 입력하세요"
         view.addSubview(searchBar)
@@ -80,8 +82,7 @@ class SearchViewController: UIViewController {
     }
 }
 
-// MARK: - Search 기능
-
+//검색기능
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let keyword = searchBar.text, !keyword.isEmpty else { return }
@@ -93,8 +94,7 @@ extension SearchViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: - TableView
-
+//검색 결과 뷰
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         books.count
@@ -107,6 +107,7 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
+    //셀 선택 시 모달
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let book = books[indexPath.row]
         let vc = BookDetailViewController()
@@ -115,8 +116,6 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
         present(vc, animated: true)
     }
 }
-
-// MARK: - CollectionView (최근 본 책)
 
 extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -134,6 +133,7 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
         let vc = BookDetailViewController()
         vc.book = book
         
+        //최근본책 갱신 콜백
         vc.onSave = { [weak self] in
             guard let self = self else {return}
             self.recentBooks = RecentBookManager.shared.fetchRecentBooks()
